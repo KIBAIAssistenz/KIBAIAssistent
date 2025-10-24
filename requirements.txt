@@ -33,4 +33,7 @@ ddgs>=2.3.0
 # --- UI / Interaction ---
 gradio>=4.44.0
 playwright>=1.48.0
+
+
+# --- BM25 for retrieval ---
 rank_bm25>=0.2.2
