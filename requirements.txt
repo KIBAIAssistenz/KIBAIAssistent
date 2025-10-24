@@ -15,9 +15,6 @@ torch>=2.4.1
 torchvision>=0.19.1
 faiss-cpu>=1.8.0
 
-# --- Vector DBs & tools ---
-chromadb>=0.5.5
-
 # --- Document loaders / processing ---
 pypdf>=4.2.0
 unstructured>=0.15.0
@@ -37,3 +34,6 @@ playwright>=1.48.0
 
 # --- BM25 for retrieval ---
 rank_bm25>=0.2.2
+pymupdf 
+pillow
+
