@@ -15,4 +15,4 @@ def build_machine_learning_expert(llm_generation=llm):
         prompt=PROMPT_MACHINE_LEARNING,
         retriever=retriever,
     )
-    return {"chain": chain, "retriever": retriever}
+    return {"chain": chain, "retriever": retriever,"module": "Machine Learning",}

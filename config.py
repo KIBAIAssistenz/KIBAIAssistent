@@ -9,14 +9,11 @@ CHUNK_OVERLAP = 150
 # === Datenpfade ===
 # PDF-Ordner nach Modul getrennt
 DATA_DIR = "data/pdfs"
-PDF_DIR_INTRO = f"{DATA_DIR}/einführung_KI"
+PDF_DIR_INTRO = f"{DATA_DIR}/einfuehrung_KI"
 PDF_DIR_ML = f"{DATA_DIR}/machine_learning"
  
 # Verzeichnis für verarbeitete Dateien
 PROCESSED_DIR = "data/processed"
- 
-# Vektordatenbank
-# VECTOR_DB_PATH = "vectorstore/chroma_db"
  
 # === Modelleinstellungen ===
 EMBEDDING_BACKEND = "huggingface"  # nur zur Info
@@ -30,6 +27,6 @@ BASE_URL = "https://api.groq.com/openai/v1"
 VERBOSE = True
  
 # === Vectorstore-Pfade ===
-# FAISS_DIR_INTRO = "vectorstore/faiss_intro"
-# FAISS_DIR_ML = "vectorstore/faiss_ml"
+FAISS_DIR_INTRO = "rag/stores/einfuehrung_KI"
+FAISS_DIR_ML = "rag/stores/machine_learning"
 

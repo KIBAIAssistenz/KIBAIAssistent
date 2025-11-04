@@ -14,5 +14,6 @@ def build_einführung_KI_expert(llm_generation=llm):
         llm_generation=llm_generation,
         prompt=PROMPT_EINFÜHRUNG_KI,
         retriever=retriever,
+        #return_source_documents=True,
     )
-    return {"chain": chain, "retriever": retriever}
+    return {"chain": chain, "retriever": retriever, "module": "Einführung in die KI",}
