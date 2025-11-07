@@ -37,3 +37,8 @@ rank_bm25>=0.2.2
 pymupdf 
 pillow
 
+flask>=2.3.0
+flask-cors>=3.0.10
+
+markdown
+beautifulsoup4>=4.12.2
