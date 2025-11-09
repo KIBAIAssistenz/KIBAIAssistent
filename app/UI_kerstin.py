@@ -36,7 +36,11 @@ def ask():
         response = expert["chain"].invoke(message)
 
         # Markdown → HTML
-        html_response = markdown.markdown(response)
+        html_response = markdown.markdown(
+            response,
+            extensions=["tables", "fenced_code", "nl2br", "sane_lists"]
+        )
+
 
         return jsonify({"response": html_response})
     except Exception as e:
