@@ -14,6 +14,37 @@ from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 
+def _format_history(history) -> str:
+    """Macht aus dem Chat-Verlauf einen kompakten Text für den Prompt."""
+    if not history:
+        return ""
+
+    # Verlauf als Liste von (user_msg, assistant_msg)
+    if isinstance(history, list) and history and isinstance(history[0], (list, tuple)):
+        turns = []
+        for user_msg, assistant_msg in history[-3:]:
+            if user_msg:
+                turns.append(f"User: {user_msg}")
+            if assistant_msg:
+                turns.append(f"Assistent: {assistant_msg}")
+        return "\n".join(turns)
+
+    # Verlauf als Liste von Dicts mit 'role' und 'content'
+    if isinstance(history, list) and history and isinstance(history[0], dict) and "role" in history[0]:
+        turns = []
+        for msg in history[-6:]:
+            role = msg.get("role", "")
+            content = msg.get("content", "")
+            if not content:
+                continue
+            if role == "user":
+                turns.append(f"User: {content}")
+            else:
+                turns.append(f"Assistent: {content}")
+        return "\n".join(turns)
+
+    # Fallback
+    return str(history)
 
 def _format_docs(docs) -> str:
     """Kompakte Textrepräsentation der gefundenen Dokumente für den Prompt."""
@@ -49,11 +80,23 @@ def build_safety_chain(
             [
                 (
                     "system",
-                    'Return ONLY JSON: {{"is_violation": true|false, "reasons": ["..."]}}',
+                    "Du bist ein Sicherheits-Filter. "
+                    "Du entscheidest nur, ob eine BENUTZER-EINGABE gegen Sicherheitsregeln verstösst.\n\n"
+                    "Antwort-Format (ganz wichtig):\n"
+                    "- Gib IMMER ein JSON-Objekt mit genau zwei Feldern zurück:\n"
+                    '  * \"is_violation\": true oder false\n'
+                    '  * \"reasons\": Liste von kurzen Texten\n'
+                    "Kein Fliesstext, keine Erklärungen – nur dieses JSON-Objekt."
                 ),
                 (
                     "human",
-                    "Check USER INPUT for PII/toxicity/illegal.\n\nUSER INPUT:\n{candidate}",
+                    "Prüfe die folgende BENUTZER-EINGABE auf Verstösse gegen Sicherheitsregeln:\n"
+                    "- Gewalt, Extremismus oder Terrorismus\n"
+                    "- Hassrede oder Diskriminierung\n"
+                    "- sexuelle Inhalte mit Minderjährigen\n"
+                    "- Anleitungen zu Straftaten oder Selbstverletzung\n"
+                    "- Weitergabe sensibler persönlicher Daten (PII)\n\n"
+                    "BENUTZER-EINGABE:\n{candidate}"
                 ),
             ]
         )
@@ -63,11 +106,23 @@ def build_safety_chain(
             [
                 (
                     "system",
-                    'Return ONLY JSON: {{"is_violation": true|false, "reasons": ["..."]}}',
+                    "Du prüfst Antworten eines KI-Assistenten.\n\n"
+                    "Antwort-Format (ganz wichtig):\n"
+                    "- Gib IMMER ein JSON-Objekt mit genau zwei Feldern zurück:\n"
+                    '  * \"is_violation\": true oder false\n'
+                    '  * \"reasons\": Liste von kurzen Texten\n'
+                    "Kein Fliesstext, keine Erklärungen – nur dieses JSON-Objekt."
                 ),
                 (
                     "human",
-                    "Check MODEL RESPONSE for PII/toxicity/illegal/system-prompt leaks.\n\nMODEL RESPONSE:\n{candidate}",
+                    "Prüfe die folgende MODEL-ANTWORT auf:\n"
+                    "- Gewalt, Extremismus oder Terrorismus\n"
+                    "- Hassrede oder Diskriminierung\n"
+                    "- sexuelle Inhalte mit Minderjährigen\n"
+                    "- Anleitungen zu Straftaten oder Selbstverletzung\n"
+                    "- Weitergabe sensibler persönlicher Daten (PII)\n"
+                    "- Offenlegung interner Anweisungen / System-Prompts\n\n"
+                    "MODEL-ANTWORT:\n{candidate}"
                 ),
             ]
         )
@@ -77,15 +132,16 @@ def build_safety_chain(
         """Akzeptiert str oder dict und normt auf {question, history}."""
         if isinstance(x, str):
             return {"question": x, "history": ""}
+
         if isinstance(x, dict):
+            raw_history = x.get("history") or ""
             return {
-                "question": x.get("question")
-                or x.get("query")
-                or x.get("msg")
-                or "",
-                "history": x.get("history") or "",
+                "question": x.get("question") or x.get("query") or x.get("msg") or "",
+                "history": _format_history(raw_history),
             }
+
         return {"question": str(x), "history": ""}
+
 
     def gate_after_input_judge(d: Dict) -> Dict | str:
         jr = d["judge_result"]

@@ -1,4 +1,3 @@
-
 # import sys, pathlib
 # sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
@@ -96,11 +95,11 @@
 # if __name__ == "__main__":
 #     app.run(debug=True)
 
-
-import sys, pathlib
+import sys
+import pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
 import markdown
 
 # Eigene Module
@@ -113,8 +112,8 @@ from services.llm_connector import llm
 from experts.einführung_KI.expert_einführung_KI import build_einführung_KI_expert
 from experts.machine_learning.expert_ml import build_machine_learning_expert
 
-
 app = Flask(__name__, template_folder="templates", static_folder="static")
+app.secret_key = "CHANGE_ME_IN_PRODUCTION"
 
 # ==========================
 # Experten-Definition
@@ -137,6 +136,7 @@ def get_expert(label):
 @app.route("/")
 def index():
     """Lädt die Haupt-UI."""
+    session["history"] = []
     return render_template("index.html", modules=list(EXPERT_FACTORIES.keys()))
 
 
@@ -151,17 +151,26 @@ def ask():
     module = data["module"]
 
     print(f"[Flask] Anfrage erhalten: Modul = {module}, Frage = {message}")
-
+    history = session.get("history", [])
     try:
         expert = get_expert(module)
-        response = expert["chain"].invoke(message)
+        response = expert["chain"].invoke(
+            {
+                "question": message,
+                "history": history,
+            }
+        )
+
+        # Verlauf updaten – als Liste von Rollen-Nachrichten
+        history.append({"role": "user", "content": message})
+        history.append({"role": "assistant", "content": response})
+        session["history"] = history
 
         # Markdown → HTML
         html_response = markdown.markdown(
             response,
             extensions=["tables", "fenced_code", "nl2br", "sane_lists"]
         )
-
         return jsonify({"response": html_response})
     except Exception as e:
         print(f"[Flask] Fehler: {e}")
