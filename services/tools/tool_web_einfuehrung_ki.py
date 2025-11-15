@@ -1,0 +1,84 @@
+# services/tools/tool_web_einfuehrung_ki.py
+
+import os
+from pydantic import BaseModel, Field
+from langchain.tools import tool
+import wikipedia
+
+# --- User Agent für Wikipedia setzen (Pflicht laut Policy) ---
+USER_AGENT = "FHNW-KI-Lernassistent/1.0 (https://fhnw.ch)"
+os.environ["WIKIPEDIA_USER_AGENT"] = USER_AGENT
+wikipedia.set_user_agent(USER_AGENT)
+wikipedia.set_lang("de")  # zuerst deutsch versuchen
+
+
+class KIQuestionInput(BaseModel):
+    # WICHTIG: Feld heisst 'question', damit es zum Router passt
+    question: str = Field(
+        ...,
+        description="Frage der Studierenden zum Modul 'Einführung in die KI' für die Websuche.",
+    )
+
+
+@tool(
+    args_schema=KIQuestionInput,
+    description="Wikipedia-Websuche für Fragen zu 'Einführung in die KI', wenn keine Modulfolien helfen.",
+)
+def ki_web_search(question: str) -> dict:
+    """
+    Fallback-Websuche für das Modul 'Einführung in die KI'.
+
+    - Nutzt Wikipedia (de, ggf. englisch als Fallback)
+    - Wird nur vom Router aufgerufen, wenn die Chain sagt:
+      'Ich weiss es nicht basierend auf den vorhandenen Dokumenten.'
+    - Gibt immer ein Dict mit 'answer' und 'source_type' zurück.
+    """
+    try:
+        print(f"🔍 [KI-Web-Tool] Frage: {question}")
+
+        # 1) In deutschsprachiger Wikipedia suchen
+        hits = wikipedia.search(question)
+        if not hits:
+            # Fallback: englische Wikipedia
+            wikipedia.set_lang("en")
+            hits = wikipedia.search(question)
+
+        if not hits:
+            # wieder zurück auf de stellen
+            wikipedia.set_lang("de")
+            return {
+                "answer": (
+                    "Ich habe in der Webrecherche (Wikipedia) keine wirklich "
+                    "passenden Informationen zu deiner Frage gefunden."
+                ),
+                "source_type": "web",
+            }
+
+        # 2) Erste passende Seite holen
+        page = wikipedia.page(hits[0], auto_suggest=False)
+        summary = page.summary
+
+        # Sprache wieder auf deutsch zurückstellen
+        wikipedia.set_lang("de")
+
+        answer_text = (
+            "Web-Zusammenfassung (Wikipedia, eventuell leicht vereinfacht):\n\n"
+            f"{summary}"
+        )
+
+        return {
+            "answer": answer_text,
+            "source_type": "web",
+        }
+
+    except Exception as e:
+        # Sprache sicherheitshalber zurücksetzen
+        try:
+            wikipedia.set_lang("de")
+        except Exception:
+            pass
+
+        return {
+            "answer": f"⚠️ Fehler bei der Webrecherche (Wikipedia): {e}",
+            "source_type": "web",
+        }
