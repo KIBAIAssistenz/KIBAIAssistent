@@ -2,10 +2,9 @@
 <html lang="de" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <title>FHNW Lernassistent</title>
+  <title>BAI-Lernassistent</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> <!-- Markdown Renderer -->
 
   <style>
     :root{
@@ -22,72 +21,403 @@
       --border:#1f2430;--bubble:#0f141a;
       --bubble-user:#121821;--shadow:0 8px 30px rgba(0,0,0,.4);
     }
-    *{box-sizing:border-box;transition:background .3s,color .3s,border .3s;}
-    html,body{margin:0;height:100%;font-family:Inter,system-ui,Arial,sans-serif;background:var(--bg);color:var(--text);}
-    body{display:flex;flex-direction:row;overflow:hidden;}
+    *{
+      box-sizing:border-box;
+      transition:background .3s,color .3s,border .3s;
+    }
+    html,body{
+      margin:0;
+      height:100%;
+      font-family:Inter,system-ui,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+    body{
+      display:flex;
+      flex-direction:row;
+      overflow:hidden;
+    }
 
     /* Sidebar */
-    .sidebar{width:280px;flex-shrink:0;border-right:1px solid var(--border);
-      background:var(--bg-elev);display:flex;flex-direction:column;height:100vh;position:sticky;top:0;}
-    .side-header{display:flex;align-items:center;gap:10px;padding:16px;background:var(--yellow);color:#000;}
+    .sidebar{
+      width:280px;
+      flex-shrink:0;
+      border-right:1px solid var(--border);
+      background:var(--bg-elev);
+      display:flex;
+      flex-direction:column;
+      height:100vh;
+      position:sticky;
+      top:0;
+    }
+    .side-header{
+      height:60px;                  /* gelber Balken bleibt fix */
+      padding:0 16px;               /* kein vertikaler Platz → Logo bestimmt NICHT die Höhe */
+      background:var(--yellow);
+      color:#000;
+      box-shadow:0 10px 25px rgba(0,0,0,0.08);
+      animation:headerDrop .5s ease-out;
+
+      display:flex;
+      align-items:center;
+      position:relative;            /* wichtig für absolutes Logo */
+    }
+
+    .brand{
+      position:absolute;
+      height:60px;                  /* LOGO-GRÖSSE → hier kannst du anpassen */
+      width:auto;
+      top:50%;
+      left:16px;
+      transform:translateY(-50%);   /* perfekt zentriert */
+    }
+
+
     [data-theme="dark"] .side-header{background:var(--yellow-dark);}
-    .brand{height:60px;width:auto;}
-    .title{font-weight:700;}
-    .side-section{padding:16px;border-bottom:1px solid var(--border);}
+    .title{font-weight:700;font-size:1.05rem;}
+
+    .side-section{
+      padding:16px;
+      border-bottom:1px solid var(--border);
+      animation:sideFade .6s ease-out;
+      animation-fill-mode:backwards;
+    }
+    .side-section:nth-child(2){animation-delay:.05s;}
+    .side-section:nth-child(3){animation-delay:.1s;}
+    .side-section:nth-child(4){animation-delay:.15s;}
+
     .label{font-size:.85rem;color:var(--muted);margin-bottom:8px;}
-    select,.btn{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);
-      background:var(--bg);color:var(--text);font-size:0.95rem;}
-    .btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.08);}
-    .toggle{display:flex;align-items:center;justify-content:space-between;}
-    .switch{appearance:none;width:44px;height:26px;border-radius:999px;position:relative;background:#d1d5db;cursor:pointer;}
+    select,.btn{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:var(--bg);
+      color:var(--text);
+      font-size:0.95rem;
+      cursor:pointer;
+      transition:transform .18s, box-shadow .18s, background .2s;
+    }
+    .btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 4px 14px rgba(0,0,0,0.12);
+      background:rgba(241,230,11,0.12);
+    }
+    .toggle{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .switch{
+      appearance:none;
+      width:44px;
+      height:26px;
+      border-radius:999px;
+      position:relative;
+      background:#d1d5db;
+      cursor:pointer;
+      outline:none;
+      transition:background .2s;
+    }
     .switch:checked{background:#111827;}
-    .switch:before{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;
-      border-radius:50%;transition:.2s;}
+    .switch:before{
+      content:"";
+      position:absolute;
+      top:3px;
+      left:3px;
+      width:20px;
+      height:20px;
+      background:#fff;
+      border-radius:50%;
+      transition:.2s;
+      box-shadow:0 2px 6px rgba(0,0,0,0.25);
+    }
     .switch:checked:before{transform:translateX(18px);}
 
     /* Main */
-    .main{flex:1;display:flex;flex-direction:column;height:100vh;}
-    .topbar{height:56px;display:flex;align-items:center;justify-content:center;
-      background:var(--yellow);color:#000;font-weight:600;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,0.05);}
+    .main{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      height:100vh;
+    }
+    .topbar{
+      height:60px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:var(--yellow);
+      color:#000;
+      font-weight:600;
+      flex-shrink:0;
+      box-shadow:0 2px 6px rgba(0,0,0,0.05);
+      letter-spacing:.02em;
+      animation:barSlide .5s ease-out;
+      position: relative; /* ← WICHTIG */
+    }
+
     [data-theme="dark"] .topbar{background:var(--yellow-dark);}
-    .stream{flex:1;overflow-y:auto;padding:24px 12px;display:flex;justify-content:center;}
-    .stream-inner{width:100%;max-width:var(--maxw);}
-    .msg{display:grid;grid-template-columns:68px 1fr;gap:20px;padding:18px;border-radius:var(--radius);
-      background:var(--bubble);box-shadow:var(--shadow);border:1px solid var(--border);margin:16px 0;
-      opacity:0;transform:translateY(20px);animation:fadeIn .4s forwards;}
+    .stream{
+      flex:1;
+      overflow-y:auto;
+      padding:24px 12px;
+      display:flex;
+      justify-content:center;
+    }
+    .stream-inner{
+      width:100%;
+      max-width:var(--maxw);
+    }
+
+    .logout-btn {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #000;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+  .logout-btn:hover {
+    background: #333;
+    transform: translateY(-50%) scale(1.05);
+  }
+
+
+    .msg{
+      display:grid;
+      grid-template-columns:68px 1fr;
+      gap:20px;
+      padding:18px;
+      border-radius:var(--radius);
+      background:var(--bubble);
+      box-shadow:var(--shadow);
+      border:1px solid var(--border);
+      margin:16px 0;
+      opacity:0;
+      transform:translateY(18px) scale(.98);
+      animation:msgIn .35s ease-out forwards;
+    }
     .msg.user{background:var(--bubble-user);}
-    .avatar{height:68px;width:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-      background:var(--yellow);color:#000;font-weight:700;}
-    .avatar-bot{background:linear-gradient(145deg,#fff 0%, var(--yellow) 100%);}
-    .avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
-    .composer-wrap{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(0,0,0,0),var(--bg) 30%);
-      padding:14px 12px;display:flex;justify-content:center;}
-    .composer{display:flex;gap:10px;width:100%;max-width:var(--maxw);
-      background:var(--bg-elev);border:1px solid var(--border);border-radius:999px;padding:8px;box-shadow:var(--shadow);}
-    .composer input{flex:1;border:none;background:transparent;color:var(--text);
-      font-size:1rem;padding:10px 14px;outline:none;}
-    .send{background:var(--yellow);border:none;border-radius:999px;padding:10px 14px;
-      cursor:pointer;font-weight:700;transition:.2s;}
-    .send:hover{transform:scale(1.05);}
-    .stars{margin-top:10px;display:flex;align-items:center;gap:4px;}
-    .stars span{cursor:pointer;font-size:1.6rem;color:#ccc;transition:transform .15s,color .2s;}
+
+    .avatar{
+      height:68px;
+      width:68px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:var(--yellow);
+      color:#000;
+      font-weight:700;
+      box-shadow:0 8px 18px rgba(0,0,0,0.18);
+      transform-origin:center;
+    }
+    .avatar-bot{
+      background:linear-gradient(145deg,#fff 0%, var(--yellow) 100%);
+    }
+    .avatar-img{
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      object-fit:cover;
+    }
+    .typing-avatar{
+      animation:pulseAvatar 1s ease-in-out infinite;
+    }
+
+    .composer-wrap{
+      position:sticky;
+      bottom:0;
+      background:linear-gradient(180deg,rgba(0,0,0,0),var(--bg) 30%);
+      padding:14px 12px;
+      display:flex;
+      justify-content:center;
+    }
+    .composer{
+      display:flex;
+      gap:10px;
+      width:100%;
+      max-width:var(--maxw);
+      background:var(--bg-elev);
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:8px;
+      box-shadow:var(--shadow);
+      align-items:center;
+      animation:composerUp .4s ease-out .1s backwards;
+    }
+    .composer input{
+      flex:1;
+      border:none;
+      background:transparent;
+      color:var(--text);
+      font-size:1rem;
+      padding:10px 14px;
+      outline:none;
+    }
+
+    .send{
+      background:var(--yellow);
+      border:none;
+      border-radius:999px;
+      padding:10px 16px;
+      cursor:pointer;
+      font-weight:700;
+      transition:transform .15s, box-shadow .15s, background .15s;
+      box-shadow:0 6px 14px rgba(0,0,0,0.18);
+      position:relative;
+      overflow:hidden;
+    }
+    [data-theme="dark"] .send{background:var(--yellow-dark);}
+    .send:hover{
+      transform:translateY(-1px) scale(1.03);
+      box-shadow:0 8px 20px rgba(0,0,0,0.25);
+    }
+    .send:active{
+      transform:translateY(1px) scale(.96);
+      box-shadow:0 3px 8px rgba(0,0,0,0.18);
+    }
+    .send.sending::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:radial-gradient(circle at center,rgba(255,255,255,0.5),transparent 60%);
+      opacity:0;
+      animation:sendFlash .4s ease-out;
+    }
+
+    .stars{
+      margin-top:10px;
+      display:flex;
+      align-items:center;
+      gap:4px;
+    }
+    .stars span{
+      cursor:pointer;
+      font-size:1.6rem;
+      color:#ccc;
+      transition:transform .15s,color .2s;
+    }
     .stars span:hover{transform:scale(1.2);}
     .stars .active{color:#f1e60b;}
+
+    /* Loader dots */
+    .loader-line{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      margin-top:4px;
+      font-size:0.85rem;
+      color:var(--muted);
+    }
+    .loader-dots{
+      display:inline-flex;
+      gap:4px;
+      margin-left:2px;
+    }
+    .loader-dots span{
+      width:6px;
+      height:6px;
+      border-radius:999px;
+      background:var(--muted);
+      animation:dotPulse 1s infinite ease-in-out;
+    }
+    .loader-dots span:nth-child(2){animation-delay:.16s;}
+    .loader-dots span:nth-child(3){animation-delay:.32s;}
+
+    /* Tabellen Styling – ohne eigene Animation, verhält sich wie normaler Content */
+    .msg table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:8px;
+      margin-bottom:8px;
+      font-size:0.9rem;
+      /* keine zusätzliche Animation – kommt mit der Msg rein + Typewriter */
+    }
+    .msg table th, .msg table td{
+      border:1px solid var(--border);
+      padding:8px;
+      text-align:left;
+    }
+    .msg table th{
+      background:var(--bg-elev);
+      font-weight:600;
+    }
+
+    @keyframes msgIn{
+      from{
+        opacity:0;
+        transform:translateY(18px) scale(.97);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+      }
+    }
     @keyframes fadeIn{to{opacity:1;transform:translateY(0);}}
+    @keyframes barSlide{
+      from{transform:translateY(-20px);opacity:0;}
+      to{transform:translateY(0);opacity:1;}
+    }
+    @keyframes headerDrop{
+      from{transform:translateY(-25px);opacity:0;}
+      to{transform:translateY(0);opacity:1;}
+    }
+    @keyframes sideFade{
+      from{opacity:0;transform:translateX(-12px);}
+      to{opacity:1;transform:translateX(0);}
+    }
+    @keyframes composerUp{
+      from{opacity:0;transform:translateY(16px) scale(.98);}
+      to{opacity:1;transform:translateY(0) scale(1);}
+    }
+    @keyframes pulseAvatar{
+      0%{transform:scale(1);}
+      50%{transform:scale(1.06);}
+      100%{transform:scale(1);}
+    }
+    @keyframes dotPulse{
+      0%,80%,100%{transform:scale(0.6);opacity:.4;}
+      40%{transform:scale(1);opacity:1;}
+    }
+    @keyframes tablePop{
+      from{opacity:0;transform:translateY(8px) scale(.98);}
+      to{opacity:1;transform:translateY(0) scale(1);}
+    }
+    @keyframes sendFlash{
+      from{opacity:.8;}
+      to{opacity:0;}
+    }
+
     @media(max-width:960px){
       body{flex-direction:column;}
-      .sidebar{width:100%;height:auto;border-right:none;border-bottom:1px solid var(--border);
-        flex-direction:row;align-items:center;justify-content:space-between;}
+      .sidebar{
+        width:100%;
+        height:auto;
+        border-right:none;
+        border-bottom:1px solid var(--border);
+        flex-direction:row;
+        align-items:center;
+        justify-content:space-between;
+      }
       .side-section{display:none;}
     }
   </style>
 </head>
+
 <body>
   <aside class="sidebar">
     <div class="side-header">
       <img class="brand" src="{{ url_for('static', filename='fhnw_logo.jpg') }}" alt="FHNW" />
-      <div class="title">FHNW Lernassistent</div>
+      <div class="title"></div>
     </div>
+
     <div class="side-section">
       <div class="label">Modul wählen</div>
       <select id="moduleSelect">
@@ -96,6 +426,7 @@
         {% endfor %}
       </select>
     </div>
+
     <div class="side-section">
       <div class="label">Darstellung</div>
       <div class="toggle">
@@ -103,14 +434,20 @@
         <input id="themeSwitch" class="switch" type="checkbox" />
       </div>
     </div>
-    <div class="side-section">
-      <button class="btn" id="btnNew">+ Neue Unterhaltung</button>
-    </div>
+
   </aside>
 
   <main class="main">
-    <div class="topbar">Lernmodus</div>
-    <div class="stream" id="scrollArea"><div class="stream-inner" id="stream"></div></div>
+    <div class="topbar">
+      BAI-Lernassistent
+
+      <!-- Logout rechts oben -->
+      <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+    <div class="stream" id="scrollArea">
+      <div class="stream-inner" id="stream"></div>
+    </div>
+
     <div class="composer-wrap">
       <form class="composer" onsubmit="event.preventDefault(); sendMessage();">
         <input id="userInput" type="text" placeholder="Frag etwas zu deinem Modul …" autocomplete="off" />
@@ -120,82 +457,154 @@
   </main>
 
   <script>
-    // === Dark Mode ===
-    const themeSwitch=document.getElementById("themeSwitch");
-    const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if(prefersDark){document.documentElement.setAttribute('data-theme','dark');themeSwitch.checked=true;}
-    themeSwitch.addEventListener('change',()=>document.documentElement.setAttribute('data-theme',themeSwitch.checked?'dark':'light'));
+    // === Theme Switching ===
+    const themeSwitch = document.getElementById("themeSwitch");
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if(prefersDark){
+      document.documentElement.setAttribute('data-theme','dark');
+      themeSwitch.checked = true;
+    }
+    themeSwitch.addEventListener('change',()=>{
+      document.documentElement.setAttribute('data-theme', themeSwitch.checked ? 'dark' : 'light');
+    });
 
-    const stream=document.getElementById("stream");
-    const scrollArea=document.getElementById("scrollArea");
-    const input=document.getElementById("userInput");
-    document.getElementById("btnNew").addEventListener("click",()=>{stream.innerHTML="";input.focus();});
+    const stream = document.getElementById("stream");
+    const scrollArea = document.getElementById("scrollArea");
+    const input = document.getElementById("userInput");
+    const sendBtn = document.querySelector(".send");
 
-    function addMsg(role, html){
-      const wrap=document.createElement("article");
-      wrap.className=`msg ${role}`;
-      wrap.innerHTML=`
-        <div class="avatar ${role==='bot'?'avatar-bot':''}">
-          ${role==='bot'?`<img src="{{ url_for('static', filename='chatbot.jpg') }}" class="avatar-img">`:'S'}
+    document.getElementById("btnNew").addEventListener("click",()=>{
+      stream.innerHTML="";
+      input.focus();
+    });
+
+    function scrollToBottom(){
+      scrollArea.scrollTop = scrollArea.scrollHeight;
+    }
+
+    function addMsg(role, html, isTyping=false){
+      const wrap = document.createElement("article");
+      wrap.className = `msg ${role}` + (isTyping ? " typing" : "");
+      wrap.innerHTML = `
+        <div class="avatar ${role==='bot' ? 'avatar-bot' : ''}">
+          ${role==='bot'
+            ? `<img src="{{ url_for('static', filename='chatbot.jpg') }}" class="avatar-img">`
+            : 'S'}
         </div>
-        <div><div class="meta">${role==='bot'?'Lernassistent':'Du'}</div><div class="content">${html}</div></div>`;
+        <div>
+          <div class="meta" style="font-size:0.8rem;color:var(--muted);margin-bottom:4px;">
+            ${role==='bot' ? 'Lernassistent' : 'Du'}
+          </div>
+          <div class="content">${html}</div>
+        </div>`;
       stream.appendChild(wrap);
+
+      if(role === 'bot' && isTyping){
+        const avatar = wrap.querySelector(".avatar");
+        avatar.classList.add("typing-avatar");
+      }
+
       scrollToBottom();
       return wrap.querySelector(".content");
     }
 
-    function scrollToBottom(){scrollArea.scrollTop=scrollArea.scrollHeight;}
-
-    // === Typewriter mit Markdown ===
-    function typeMarkdown(target, markdown, speed=12, done){
-      const html=marked.parse(markdown);
-      const temp=document.createElement("div");
-      temp.innerHTML=html;
-      const nodes=Array.from(temp.childNodes);
-      let i=0;
-      function renderNext(){
-        if(i<nodes.length){
-          target.appendChild(nodes[i].cloneNode(true));
-          i++;
-          scrollToBottom();
-          setTimeout(renderNext,speed*6);
-        }else if(done) done();
+    // Typewriter-Effekt für HTML-String
+    function typeHTML(target, html, speed = 15, done){
+      let i = 0;
+      function step(){
+        target.innerHTML = html.slice(0, i);
+        i++;
+        scrollToBottom();
+        if(i <= html.length){
+          setTimeout(step, speed);
+        }else{
+          if(typeof done === "function") done();
+        }
       }
-      renderNext();
+      step();
     }
 
     async function sendMessage(){
-      const message=input.value.trim();
-      const module=document.getElementById("moduleSelect").value;
-      if(!message)return;
-      addMsg("user",message);
-      input.value="";
-      const botContent=addMsg("bot","<strong>Lernassistent:</strong> <span class='dots'>...</span>");
+      const message = input.value.trim();
+      const module = document.getElementById("moduleSelect").value;
+      if(!message) return;
+
+      addMsg("user", message);
+      input.value = "";
+
+      // Send-Button kurz als "sending" animieren
+      sendBtn.classList.add("sending");
+      setTimeout(()=>sendBtn.classList.remove("sending"), 300);
+
+      // Bot-Message mit Loader & Avatar-Animation
+      const loaderHtml = `
+        <strong>Lernassistent:</strong>
+        <div class="loader-line">
+          schreibt
+          <span class="loader-dots">
+            <span></span><span></span><span></span>
+          </span>
+        </div>
+      `;
+      const botContent = addMsg("bot", loaderHtml, true);
+
       try{
-        const res=await fetch("/ask",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message,module})});
-        const data=await res.json();
-        botContent.innerHTML="<strong>Lernassistent:</strong><br><div class='rt'></div>";
-        const container=botContent.querySelector(".rt");
-        typeMarkdown(container,data.response,10,()=>addStars(botContent,message,data.response));
-      }catch{botContent.innerHTML="⚠️ Fehler beim Senden.";}
+        const res = await fetch("/ask",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({message,module})
+        });
+        const data = await res.json();
+
+        // Typing-Zustand entfernen
+        const msgWrapper = botContent.closest(".msg");
+        if(msgWrapper){
+          msgWrapper.classList.remove("typing");
+          const avatar = msgWrapper.querySelector(".avatar");
+          if(avatar){ avatar.classList.remove("typing-avatar"); }
+        }
+
+        // Antwort-Container setzen
+        botContent.innerHTML = `<strong>Lernassistent:</strong><br><div class="rt"></div>`;
+        const container = botContent.querySelector(".rt");
+
+        // Typing-Effekt über kompletten HTML-String aus dem Backend
+        typeHTML(container, data.response, 12, () => {
+          addStars(botContent, message, data.response);
+        });
+
+      }catch(e){
+        console.error(e);
+        botContent.innerHTML = "⚠️ Fehler beim Senden.";
+      }
     }
 
-    function addStars(container,message,response){
-      const stars=document.createElement("div");
-      stars.className="stars";
-      stars.innerHTML=[1,2,3,4,5].map(i=>`<span data-val="${i}">★</span>`).join("");
+    function addStars(container, message, response){
+      const stars = document.createElement("div");
+      stars.className = "stars";
+      stars.innerHTML = [1,2,3,4,5].map(i=>`<span data-val="${i}">★</span>`).join("");
       container.appendChild(stars);
+
       stars.querySelectorAll("span").forEach(star=>{
         star.addEventListener("mouseenter",()=>{
-          const val=parseInt(star.dataset.val);
-          stars.querySelectorAll("span").forEach(s=>s.style.color=parseInt(s.dataset.val)<=val?"#f1e60b":"#ccc");
+          const val = parseInt(star.dataset.val);
+          stars.querySelectorAll("span")
+            .forEach(s=>s.style.color = parseInt(s.dataset.val) <= val ? "#f1e60b" : "#ccc");
         });
+
         star.addEventListener("click",async()=>{
-          const rating=parseInt(star.dataset.val);
-          stars.querySelectorAll("span").forEach(s=>s.classList.toggle("active",parseInt(s.dataset.val)<=rating));
-          await fetch("/feedback",{method:"POST",headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({user_id:"student_ui",message,response,rating})});
-          stars.insertAdjacentHTML("beforeend","<span style='margin-left:8px;font-size:0.9rem;'>Danke ✅</span>");
+          const rating = parseInt(star.dataset.val);
+          stars.querySelectorAll("span")
+            .forEach(s=>s.classList.toggle("active", parseInt(s.dataset.val) <= rating));
+
+          await fetch("/feedback",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({user_id:"student_ui", message, response, rating})
+          });
+
+          stars.insertAdjacentHTML("beforeend",
+            "<span style='margin-left:8px;font-size:0.9rem;'>Danke ✅</span>");
         });
       });
     }
