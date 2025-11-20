@@ -29,4 +29,5 @@ VERBOSE = True
 # === Vectorstore-Pfade ===
 FAISS_DIR_INTRO = "rag/stores/einfuehrung_KI"
 FAISS_DIR_ML = "rag/stores/machine_learning"
-
+FAISS_DIR_BIS = "rag/stores/bis"
+PDF_DIR_BIS = "data/pdfs/bis"

@@ -202,11 +202,15 @@ from rlhf_pipeline.rlhf_pipeline import train_agent
 from services.llm_connector import llm
 from experts.einführung_KI.expert_einführung_KI import build_einführung_KI_expert
 from experts.machine_learning.expert_ml import build_machine_learning_expert
+from experts.bis.expert_bis import build_bis_expert
+
 
 # 🔀 Router + Web-Tools importieren (NEU)
 from experts.router import answer_with_module_and_web_fallback
 from services.tools.tool_web_einfuehrung_ki import ki_web_search
 from services.tools.tool_web_ml import ml_web_search
+from services.tools.tool_web_bis import bis_web_search
+
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
@@ -220,6 +224,7 @@ app.secret_key = os.urandom(32)   # <-- Fix Session NICHT löschen!
 EXPERT_FACTORIES = {
     "Einführung in die KI": lambda: build_einführung_KI_expert(llm),
     "Machine Learning": lambda: build_machine_learning_expert(llm),
+    "Business Information Systems": lambda: build_bis_expert(llm),
 }
 EXPERT_CACHE = {}
 
@@ -234,6 +239,7 @@ def get_expert(label):
 WEB_TOOLS = {
     "Einführung in die KI": ki_web_search,
     "Machine Learning": ml_web_search,
+    "Business Information Systems": bis_web_search,
 }
 
 
