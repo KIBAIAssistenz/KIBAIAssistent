@@ -52,7 +52,7 @@ Wichtig:
 - Passe deinen Stil anhand des Nutzerfeedbacks an.
 - Antworte klar, strukturiert, präzise und möglichst verständlich.
 - Du darfst die Antwort frei gliedern (kurz, lang, Beispiele, Schritte),
-  solange sie korrekt und hilfreich bleibt.
+  solange sie korrekt und hilfreich bleibt.  Aber am Schluss immer Quellen (mit Referenz auf die Dokumente/Folien)
 
 Bei einfachen Gesprächsfragen (z. B. Name) reicht eine direkte Antwort.
 """

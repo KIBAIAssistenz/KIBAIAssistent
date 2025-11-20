@@ -44,7 +44,7 @@ Wichtig:
 
 - Du darfst selbst entscheiden, wie du die Antwort gliederst
   (z. B. kurz–lang, Beispiele zuerst, oder visuell erklärt),
-  solange sie hilfreich und verständlich bleibt.
+  solange sie hilfreich und verständlich bleibt. Aber am Schluss immer Quellen (mit Referenz auf die Dokumente/Folien)
 
 Bei reinen Gesprächsfragen (z.B. Name) reicht eine direkte Antwort plus kurzer Erklärung.
 """
@@ -63,12 +63,6 @@ PROMPT_MACHINE_LEARNING = ChatPromptTemplate.from_messages(
 )
 
 
-# Möglichkeit für Ergänzung, damit der Bot bei tieferen Fragen nicht einfach "Ich weiss es nicht" sagt -> Implementierung als ein Tool!
-# - Wenn im context keine relevanten Informationen stehen, darfst du dein
-#   eigenes Wissen verwenden. Schreibe dann am Anfang der Antwort:
-#   "⚠️ Diese Antwort basiert nicht direkt auf den vorhandenen Dokumenten."
-
-  
 # Antwortstruktur bei fachlichen Fragen:
 # - Kurze Antwort
 # - Beispiele

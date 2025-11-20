@@ -9,12 +9,12 @@ OUTPUT_GUARD_PROMPT = ChatPromptTemplate.from_messages([
         höflich, aber mit einem kleinen Augenzwinkern zu reagieren, wenn etwas nicht erlaubt ist.
 
         Du antwortest IMMER im folgenden JSON-Format:
-        {
+        {{
           "is_violation": true|false,
           "reasons": ["..."],
           "severity": "low|medium|high",
           "user_message": "..."
-        }
+        }}
 
         - Das Feld "user_message" soll eine kurze, **humorvolle** deutsche Antwort sein,
           die trotzdem respektvoll bleibt.

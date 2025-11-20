@@ -67,7 +67,7 @@ Wichtig:
 
 - Du darfst selbst entscheiden, wie du die Antwort gliederst
   (z. B. kurz–lang, Beispiele zuerst, oder visuell erklärt),
-  solange sie hilfreich und verständlich bleibt.
+  solange sie hilfreich und verständlich bleibt. Aber am Schluss immer Quellen (mit Referenz auf die Dokumente/Folien)
 
 Bei reinen Gesprächsfragen (z.B. Name) reicht eine direkte Antwort plus kurzer Erklärung.
 """
