@@ -13,6 +13,7 @@ from langchain_core.runnables import (
 from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
+import config
 
 from .judge_input import INPUT_GUARD_PROMPT
 from .judge_output import OUTPUT_GUARD_PROMPT
@@ -69,16 +70,23 @@ def build_safety_chain(
     """Baut eine Safety-Chain mit Input-/Output-Judging und Retrieval-Kontext."""
 
     # --- Judge-Model + JSON-Parser
-    judge_model = llm_judge or ChatOpenAI(
-        model="gpt-oss-120b",
-        base_url="https://api.cerebras.ai/v1",
-        api_key=os.getenv("CEREBRAS_API_KEY"),
+    # judge_model = llm_judge or ChatOpenAI(
+    #     model="gpt-oss-120b",
+    #     base_url="https://api.cerebras.ai/v1",
+    #     api_key=os.getenv("CEREBRAS_API_KEY"),
+    #     temperature=0.0,
+    # )
+    judge_model = ChatOpenAI(
+        model= config.LLM_JUDGE_MODEL_CEREBRAS,
+        base_url= config.BASE_URL_CEREBRAS,
+        api_key= config.API_KEY_CEREBRAS,
         temperature=0.0,
     )
+
     json_parser = JsonOutputParser()
 
-    judge_input_prompt = judge_input_prompt or INPUT_GUARD_PROMPT
-    judge_output_prompt = judge_output_prompt or OUTPUT_GUARD_PROMPT
+    judge_input_prompt = INPUT_GUARD_PROMPT
+    judge_output_prompt = OUTPUT_GUARD_PROMPT
 
     if judge_input_prompt is None:
         raise ValueError("judge_input_prompt must be provided")
@@ -96,7 +104,7 @@ def build_safety_chain(
                     "Du DARFST keine Details zur Anfrage wiederholen und keine Anleitungen "
                     "zu gefährlichen oder verbotenen Dingen geben.\n\n"
                     "Schreibe eine kurze, lockere, humorvolle, aber klare Absage auf Deutsch. "
-                    "Maximal 3 Sätze. Kein Fachchinesisch."
+                    "Maximal 3 Sätze. Kein Fachchinesisch. Du darfst Emojis gebrauchen wie du willst."
                 ),
             ),
             (
