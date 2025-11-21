@@ -5,7 +5,7 @@
   <title>BAI-Lernassistent</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-
+ 
   <style>
     :root{
       --yellow:#f1e60b;--yellow-dark:#e6d700;
@@ -37,7 +37,7 @@
       flex-direction:row;
       overflow:hidden;
     }
-
+ 
     /* Sidebar */
     .sidebar{
       width:280px;
@@ -57,12 +57,12 @@
       color:#000;
       box-shadow:0 10px 25px rgba(0,0,0,0.08);
       animation:headerDrop .5s ease-out;
-
+ 
       display:flex;
       align-items:center;
       position:relative;            /* wichtig für absolutes Logo */
     }
-
+ 
     .brand{
       position:absolute;
       height:60px;                  /* LOGO-GRÖSSE → hier kannst du anpassen */
@@ -71,11 +71,11 @@
       left:16px;
       transform:translateY(-50%);   /* perfekt zentriert */
     }
-
-
+ 
+ 
     [data-theme="dark"] .side-header{background:var(--yellow-dark);}
     .title{font-weight:700;font-size:1.05rem;}
-
+ 
     .side-section{
       padding:16px;
       border-bottom:1px solid var(--border);
@@ -85,7 +85,7 @@
     .side-section:nth-child(2){animation-delay:.05s;}
     .side-section:nth-child(3){animation-delay:.1s;}
     .side-section:nth-child(4){animation-delay:.15s;}
-
+ 
     .label{font-size:.85rem;color:var(--muted);margin-bottom:8px;}
     select,.btn{
       width:100%;
@@ -133,7 +133,7 @@
       box-shadow:0 2px 6px rgba(0,0,0,0.25);
     }
     .switch:checked:before{transform:translateX(18px);}
-
+ 
     /* Main */
     .main{
       flex:1;
@@ -155,7 +155,7 @@
       animation:barSlide .5s ease-out;
       position: relative; /* ← WICHTIG */
     }
-
+ 
     [data-theme="dark"] .topbar{background:var(--yellow-dark);}
     .stream{
       flex:1;
@@ -168,7 +168,7 @@
       width:100%;
       max-width:var(--maxw);
     }
-
+ 
     .logout-btn {
       position: absolute;
       right: 20px;
@@ -182,13 +182,13 @@
       text-decoration: none;
       transition: 0.2s;
     }
-
+ 
   .logout-btn:hover {
     background: #333;
     transform: translateY(-50%) scale(1.05);
   }
-
-
+ 
+ 
     .msg{
       display:grid;
       grid-template-columns:68px 1fr;
@@ -204,7 +204,7 @@
       animation:msgIn .35s ease-out forwards;
     }
     .msg.user{background:var(--bubble-user);}
-
+ 
     .avatar{
       height:68px;
       width:68px;
@@ -230,7 +230,7 @@
     .typing-avatar{
       animation:pulseAvatar 1s ease-in-out infinite;
     }
-
+ 
     .composer-wrap{
       position:sticky;
       bottom:0;
@@ -261,7 +261,7 @@
       padding:10px 14px;
       outline:none;
     }
-
+ 
     .send{
       background:var(--yellow);
       border:none;
@@ -291,7 +291,7 @@
       opacity:0;
       animation:sendFlash .4s ease-out;
     }
-
+ 
     .stars{
       margin-top:10px;
       display:flex;
@@ -306,7 +306,7 @@
     }
     .stars span:hover{transform:scale(1.2);}
     .stars .active{color:#f1e60b;}
-
+ 
     /* Loader dots */
     .loader-line{
       display:flex;
@@ -330,7 +330,7 @@
     }
     .loader-dots span:nth-child(2){animation-delay:.16s;}
     .loader-dots span:nth-child(3){animation-delay:.32s;}
-
+ 
     /* Tabellen Styling – ohne eigene Animation, verhält sich wie normaler Content */
     .msg table{
       width:100%;
@@ -349,7 +349,7 @@
       background:var(--bg-elev);
       font-weight:600;
     }
-
+ 
     @keyframes msgIn{
       from{
         opacity:0;
@@ -394,7 +394,7 @@
       from{opacity:.8;}
       to{opacity:0;}
     }
-
+ 
     @media(max-width:960px){
       body{flex-direction:column;}
       .sidebar{
@@ -410,14 +410,14 @@
     }
   </style>
 </head>
-
+ 
 <body>
   <aside class="sidebar">
     <div class="side-header">
       <img class="brand" src="{{ url_for('static', filename='fhnw_logo.jpg') }}" alt="FHNW" />
       <div class="title"></div>
     </div>
-
+ 
     <div class="side-section">
       <div class="label">Modul wählen</div>
       <select id="moduleSelect">
@@ -426,7 +426,7 @@
         {% endfor %}
       </select>
     </div>
-
+ 
     <div class="side-section">
       <div class="label">Darstellung</div>
       <div class="toggle">
@@ -434,20 +434,20 @@
         <input id="themeSwitch" class="switch" type="checkbox" />
       </div>
     </div>
-
+ 
   </aside>
-
+ 
   <main class="main">
     <div class="topbar">
       BAI-Lernassistent
-
+ 
       <!-- Logout rechts oben -->
       <a href="/logout" class="logout-btn">Logout</a>
     </div>
     <div class="stream" id="scrollArea">
       <div class="stream-inner" id="stream"></div>
     </div>
-
+ 
     <div class="composer-wrap">
       <form class="composer" onsubmit="event.preventDefault(); sendMessage();">
         <input id="userInput" type="text" placeholder="Frag etwas zu deinem Modul …" autocomplete="off" />
@@ -455,7 +455,7 @@
       </form>
     </div>
   </main>
-
+ 
   <script>
     // === Theme Switching ===
     const themeSwitch = document.getElementById("themeSwitch");
@@ -467,21 +467,21 @@
     themeSwitch.addEventListener('change',()=>{
       document.documentElement.setAttribute('data-theme', themeSwitch.checked ? 'dark' : 'light');
     });
-
+ 
     const stream = document.getElementById("stream");
     const scrollArea = document.getElementById("scrollArea");
     const input = document.getElementById("userInput");
     const sendBtn = document.querySelector(".send");
-
+ 
     document.getElementById("btnNew").addEventListener("click",()=>{
       stream.innerHTML="";
       input.focus();
     });
-
+ 
     function scrollToBottom(){
       scrollArea.scrollTop = scrollArea.scrollHeight;
     }
-
+ 
     function addMsg(role, html, isTyping=false){
       const wrap = document.createElement("article");
       wrap.className = `msg ${role}` + (isTyping ? " typing" : "");
@@ -498,16 +498,16 @@
           <div class="content">${html}</div>
         </div>`;
       stream.appendChild(wrap);
-
+ 
       if(role === 'bot' && isTyping){
         const avatar = wrap.querySelector(".avatar");
         avatar.classList.add("typing-avatar");
       }
-
+ 
       scrollToBottom();
       return wrap.querySelector(".content");
     }
-
+ 
     // Typewriter-Effekt für HTML-String
     function typeHTML(target, html, speed = 15, done){
       let i = 0;
@@ -523,19 +523,19 @@
       }
       step();
     }
-
+ 
     async function sendMessage(){
       const message = input.value.trim();
       const module = document.getElementById("moduleSelect").value;
       if(!message) return;
-
+ 
       addMsg("user", message);
       input.value = "";
-
+ 
       // Send-Button kurz als "sending" animieren
       sendBtn.classList.add("sending");
       setTimeout(()=>sendBtn.classList.remove("sending"), 300);
-
+ 
       // Bot-Message mit Loader & Avatar-Animation
       const loaderHtml = `
         <strong>Lernassistent:</strong>
@@ -547,7 +547,7 @@
         </div>
       `;
       const botContent = addMsg("bot", loaderHtml, true);
-
+ 
       try{
         const res = await fetch("/ask",{
           method:"POST",
@@ -555,7 +555,7 @@
           body:JSON.stringify({message,module})
         });
         const data = await res.json();
-
+ 
         // Typing-Zustand entfernen
         const msgWrapper = botContent.closest(".msg");
         if(msgWrapper){
@@ -563,46 +563,46 @@
           const avatar = msgWrapper.querySelector(".avatar");
           if(avatar){ avatar.classList.remove("typing-avatar"); }
         }
-
+ 
         // Antwort-Container setzen
         botContent.innerHTML = `<strong>Lernassistent:</strong><br><div class="rt"></div>`;
         const container = botContent.querySelector(".rt");
-
+ 
         // Typing-Effekt über kompletten HTML-String aus dem Backend
         typeHTML(container, data.response, 12, () => {
           addStars(botContent, message, data.response);
         });
-
+ 
       }catch(e){
         console.error(e);
         botContent.innerHTML = "⚠️ Fehler beim Senden.";
       }
     }
-
+ 
     function addStars(container, message, response){
       const stars = document.createElement("div");
       stars.className = "stars";
       stars.innerHTML = [1,2,3,4,5].map(i=>`<span data-val="${i}">★</span>`).join("");
       container.appendChild(stars);
-
+ 
       stars.querySelectorAll("span").forEach(star=>{
         star.addEventListener("mouseenter",()=>{
           const val = parseInt(star.dataset.val);
           stars.querySelectorAll("span")
             .forEach(s=>s.style.color = parseInt(s.dataset.val) <= val ? "#f1e60b" : "#ccc");
         });
-
+ 
         star.addEventListener("click",async()=>{
           const rating = parseInt(star.dataset.val);
           stars.querySelectorAll("span")
             .forEach(s=>s.classList.toggle("active", parseInt(s.dataset.val) <= rating));
-
+ 
           await fetch("/feedback",{
             method:"POST",
             headers:{"Content-Type":"application/json"},
             body:JSON.stringify({user_id:"student_ui", message, response, rating})
           });
-
+ 
           stars.insertAdjacentHTML("beforeend",
             "<span style='margin-left:8px;font-size:0.9rem;'>Danke ✅</span>");
         });
