@@ -2,7 +2,7 @@
 import sys, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))
 
-from services.llm_connector import llm
+from config import llm
 from experts.bis.prompt_bis import PROMPT_BIS
 from experts.bis.retriever_bis import make_bis_retriever
 from safety.chain import build_safety_chain

@@ -199,7 +199,8 @@ from reward_model.reward_model import compute_reward_from_feedback
 from rlhf_pipeline.rlhf_pipeline import train_agent
 
 # Experten & LLM
-from services.llm_connector import llm
+#from services.llm_connector import llm
+from config import llm
 from experts.einführung_KI.expert_einführung_KI import build_einführung_KI_expert
 from experts.machine_learning.expert_ml import build_machine_learning_expert
 from experts.bis.expert_bis import build_bis_expert

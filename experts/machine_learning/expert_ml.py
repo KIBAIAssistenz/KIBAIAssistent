@@ -2,7 +2,9 @@
 import sys, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))
 
-from services.llm_connector import llm
+# from services.llm_connector import llm
+import config
+from config import llm
 from experts.machine_learning.prompt_ml import PROMPT_MACHINE_LEARNING
 from experts.machine_learning.retriever_ml import make_machine_learning_retriever
 from safety.chain import build_safety_chain
