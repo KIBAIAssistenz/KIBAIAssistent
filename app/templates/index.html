@@ -473,10 +473,10 @@
     const input = document.getElementById("userInput");
     const sendBtn = document.querySelector(".send");
  
-    document.getElementById("btnNew").addEventListener("click",()=>{
-      stream.innerHTML="";
-      input.focus();
-    });
+    // document.getElementById("btnNew").addEventListener("click",()=>{
+    //   stream.innerHTML="";
+    //   input.focus();
+    // });
  
     function scrollToBottom(){
       scrollArea.scrollTop = scrollArea.scrollHeight;
@@ -507,7 +507,19 @@
       scrollToBottom();
       return wrap.querySelector(".content");
     }
- 
+         // ==============================
+      // 🔔 Modulwechsel: Bot bestätigt neues Modul
+      // ==============================
+      const moduleSelect = document.getElementById("moduleSelect");
+      let lastModule = moduleSelect.value;
+
+      moduleSelect.addEventListener("change", () => {
+        const newModule = moduleSelect.value;
+        if (newModule !== lastModule) {
+          addMsg("bot", `Jetzt befindest du dich im Modul <strong>${newModule}</strong>.`);
+          lastModule = newModule;
+        }
+      });
     // Typewriter-Effekt für HTML-String
     function typeHTML(target, html, speed = 15, done){
       let i = 0;
