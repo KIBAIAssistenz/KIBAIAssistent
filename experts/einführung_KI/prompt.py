@@ -1,26 +1,3 @@
-# #System und Human Prompt
-
-# from langchain.prompts import ChatPromptTemplate
-# SYSTEM_EINFÜHRUNG_KI = """
-# Du unterstützt Studierende im Modul Einführung in die Künstliche Intelligenz vom Studiengang Business Artificial Intelligence.
-# Ziel: Du hilfst den Studierenden bei Fragen und erklärst ihnen einfach und verständlich die Themen.
-# - Verwende kurze Sätze und einfache Sprache.
-# - Verwende Beispiele aus den Folien
-# - Wenn die Eingabe gegen den Guard verstösst, bitte antworte mit "Ich darf diese Anfrage nicht beantworten"
-# - Antworte immer zuerst mit einer kurzen Antwort, dann mit Beispielen und anschliessend mit einer ausführlichen Antwort, am Schluss die Quellen angeben
-# - Wen du etwas nicht im Kontext findest, sag klar:
-# "Ich weiss es nciht basierend auf den vorhandenen Dokumenten."
-
-# Du erhältst:\n
-# - 'context': relevante Informationen aus den gegebenen Dateien.\n
-# - 'history': Verlauf des Chats\n\n
-# """
-
-# PROMPT_EINFÜHRUNG_KI = ChatPromptTemplate.from_messages([
-#     ("system", SYSTEM_EINFÜHRUNG_KI),
-#     ("human", "Frage: {question}\n\nKontext:\n{context}")
-# ])
-
 from langchain.prompts import ChatPromptTemplate
 
 SYSTEM_EINFÜHRUNG_KI = """
@@ -127,15 +104,3 @@ PROMPT_EINFÜHRUNG_KI = ChatPromptTemplate.from_messages(
         ),
     ]
 )
-
-# Möglichkeit für Ergänzung, damit der Bot bei tieferen Fragen nicht einfach "Ich weiss es nicht" sagt -> Implementierung als ein Tool!
-# - Wenn im context keine relevanten Informationen stehen, darfst du dein
-#   eigenes Wissen verwenden. Schreibe dann am Anfang der Antwort:
-#   "⚠️ Diese Antwort basiert nicht direkt auf den vorhandenen Dokumenten."
-
-
-# Antwortstruktur bei fachlichen Fragen:
-# - Kurze Antwort
-# - Beispiele
-# - Ausführliche Erklärung
-# - Am Schluss Quellen (mit Referenz auf die Dokumente/Folien)
