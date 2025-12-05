@@ -46,3 +46,10 @@ beautifulsoup4>=4.12.2
 # --- Tooling ---
 wikipedia
 
+# Domain
+flask
+gunicorn
+requests
+openai
+
+
