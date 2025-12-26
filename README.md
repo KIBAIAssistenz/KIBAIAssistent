@@ -89,7 +89,7 @@ Unterstützung für verschiedene LLM-Anbieter:
 ### 1️⃣ Repository klonen
 
 ```bash
-git clone <dein-repo-link>
+git clone https://github.com/KIBAIAssistenz/KIBAIAssistent
 cd KIBAIAssistent
 ```
 
